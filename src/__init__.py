@@ -1,3 +1,3 @@
-from . import shacl_validation
+from . import shacl_validate
 
 __all__ = ["shacl_validation"]

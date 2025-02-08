@@ -26,6 +26,14 @@ def import_rdf(path_item: str, graph: Graph) -> Graph:
     return graph
 
 
+def validation_formatting(is_valid: bool, name: str, results: List[str]) -> List[str]:
+    validation_result = f"{BColors.OKGREEN}ok{BColors.ENDC}"
+    if not is_valid:
+        validation_result = f"{BColors.FAIL}ERROR{BColors.ENDC}"
+    results.append(f"{name} .... {validation_result}")
+    return results
+
+
 def main():
     """Import and infer triples"""
 
@@ -82,12 +90,12 @@ def main():
             q_validation_results = query_validation.validate(
                 query_dir, combined_graph)
             for valid, name in q_validation_results:
-                validation_result = f"{BColors.OKGREEN}ok{BColors.ENDC}"
+                results = validation_formatting(
+                    valid, f"Query {name}", results)
                 if not valid:
-                    validation_result = f"{BColors.FAIL}ERROR{BColors.ENDC}"
-                results.append(f"Query {name} .... {validation_result}")
+                    is_valid = False
 
-    if args.run_inference or args.all:
+    if args.run_inference or args.all and args.test_data:
         if not args.test_data:
             print(f"{BColors.WARNING}No test data specified{BColors.ENDC}")
             pass
@@ -96,10 +104,11 @@ def main():
             test_data = import_rdf(dir, test_data)
         new_graph = combined_graph + test_data
         for valid, name in owl_inference.inference_validation(new_graph, test_data):
-            validation_result = f"{BColors.OKGREEN}ok{BColors.ENDC}"
+            print(name)
+            results = validation_formatting(
+                valid, f"Inference for {name}", results)
             if not valid:
-                validation_result = f"{BColors.FAIL}ERROR{BColors.ENDC}"
-            results.append(f"Inference for {name} ... {validation_result}")
+                is_valid = False
 
     for res in results:
         print(res)

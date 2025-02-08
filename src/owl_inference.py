@@ -39,8 +39,5 @@ def inference_validation(data_graph: Graph, test_graph: Graph) -> List[Tuple[boo
             for iclass in missing_inferred_class:
                 print(iclass)
         inference_result.append((is_valid, test_node.n3()))
-        # print(data_graph.serialize(format="trig"))
 
-    print("End of inference")
     return inference_result
-    # print(data_graph.serialize(format="trig"))
